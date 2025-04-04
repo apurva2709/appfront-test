@@ -4,7 +4,7 @@ namespace App\Services;
 
 class CURLService {
 
-    public function callAPI($url)
+    public function callAPI($url): float|bool|null
     {
         try {
             $curl = curl_init();
@@ -25,18 +25,20 @@ class CURLService {
             if (!$err) {
                 $data = json_decode($response, true);
                 if (isset($data['rates']['EUR'])) {
-                    return $data['rates']['EUR'];
+                    return $data['rates']['EUR']; // float expected
                 }
             }
+
+            return null; // Return null if no error but EUR is not set
         } catch (\Exception $e) {
             \Log::info($e->getMessage());
 
-            return false;
+            return false; // Return false on exception
         }
     }
 
-    public function callConversionAPI () {
+    public function callConversionAPI(): float|bool|null
+    {
         return $this->callAPI(RATE_CONVERSION_API_URL);
     }
-
 }

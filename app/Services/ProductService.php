@@ -14,7 +14,8 @@ class ProductService {
         $this->curlService = $curlService;
     }
 
-    public function getProductDetail($request) {
+    public function getProductDetail($request): array
+    {
         $id = $request->route('product_id');
         $product = Product::find($id);
         $exchangeRate =  $this->curlService->callConversionAPI();
@@ -22,7 +23,8 @@ class ProductService {
         return compact('product','exchangeRate');
     }
 
-    public function getProductList() {
+    public function getProductList(): array
+    {
         $products = Product::all();
         $exchangeRate =  $this->curlService->callConversionAPI();
 

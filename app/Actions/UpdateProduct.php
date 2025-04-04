@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Log;
 
 class UpdateProduct
 {
-    public function handle(Request $request, $id)
+    public function handle(Request $request, $id): void
     {
         $product = Product::find($id);
 

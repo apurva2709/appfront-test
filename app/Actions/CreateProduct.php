@@ -7,7 +7,7 @@ use App\Models\Product;
 
 class CreateProduct
 {
-    public function handle(Request $request)
+    public function handle(Request $request): Product
     {
         $product = Product::create([
             'name' => $request->name,
@@ -25,5 +25,7 @@ class CreateProduct
         }
 
         $product->save();
+
+        return $product;
     }
 }

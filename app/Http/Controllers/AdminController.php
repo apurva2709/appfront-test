@@ -9,6 +9,8 @@ use App\Services\ProductService as ProductService;
 use App\Http\Requests\ProductRequest;
 use App\Actions\CreateProduct;
 use App\Actions\UpdateProduct;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
 class AdminController extends Controller
 {
@@ -19,12 +21,12 @@ class AdminController extends Controller
         $this->productService = $productService;
     }
 
-    public function loginPage()
+    public function loginPage(): View
     {
         return view('login');
     }
 
-    public function login(Request $request)
+    public function login(Request $request): RedirectResponse
     {
         if (Auth::attempt($request->except('_token'))) {
             return redirect()->route('admin.products');
@@ -33,28 +35,28 @@ class AdminController extends Controller
         return redirect()->back()->with('error', 'Invalid login credentials');
     }
 
-    public function logout()
+    public function logout(): RedirectResponse
     {
         Auth::logout();
 
         return redirect()->route('login');
     }
 
-    public function products()
+    public function products(): View
     {
         $data = $this->productService->getProductList();
 
         return view('admin.products', $data);
     }
 
-    public function editProduct($id)
+    public function editProduct($id): View
     {
         $product = Product::find($id);
 
         return view('admin.edit_product', compact('product'));
     }
 
-    public function updateProduct(ProductRequest $request, $id, UpdateProduct $updateProduct)
+    public function updateProduct(ProductRequest $request, $id, UpdateProduct $updateProduct): RedirectResponse
     {
         $request->validated();
 
@@ -63,7 +65,7 @@ class AdminController extends Controller
         return redirect()->route('admin.products')->with('success', 'Product updated successfully');
     }
 
-    public function deleteProduct($id)
+    public function deleteProduct($id): RedirectResponse
     {
         $product = Product::find($id);
         $product->delete();
@@ -71,13 +73,14 @@ class AdminController extends Controller
         return redirect()->route('admin.products')->with('success', 'Product deleted successfully');
     }
 
-    public function addProductForm()
+    public function addProductForm(): View
     {
         return view('admin.add_product');
     }
 
-    public function addProduct(ProductRequest $request, CreateProduct $createProduct)
+    public function addProduct(ProductRequest $request, CreateProduct $createProduct): RedirectResponse
     {
+        print_r($request); exit();
         $request->validated();
 
         $createProduct->handle($request);
