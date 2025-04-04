@@ -5,6 +5,7 @@ namespace App\Actions;
 use App\Jobs\SendPriceChangeNotification;
 use Illuminate\Http\Request;
 use App\Models\Product;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 
 class UpdateProduct
@@ -19,8 +20,9 @@ class UpdateProduct
         $product->update($request->all());
 
         if ($request->hasFile('image')) {
+            File::delete(public_path("uploads/").$product->image);
             $file = $request->file('image');
-            $filename = $file->getClientOriginalExtension();
+            $filename = uniqid().'.'.$file->getClientOriginalExtension();
             $file->move(public_path('uploads'), $filename);
             $product->image = 'uploads/' . $filename;
         }

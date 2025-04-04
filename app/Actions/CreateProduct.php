@@ -17,7 +17,7 @@ class CreateProduct
 
         if ($request->hasFile('image')) {
             $file = $request->file('image');
-            $filename = $file->getClientOriginalExtension();
+            $filename = uniqid().'.'.$file->getClientOriginalExtension();
             $file->move(public_path('uploads'), $filename);
             $product->image = 'uploads/' . $filename;
         } else {
