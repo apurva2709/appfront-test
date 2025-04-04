@@ -3,58 +3,31 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Product;
+use App\Services\CURLService as CURLService;
+use App\Services\ProductService as ProductService;
 
 class ProductController extends Controller
 {
+    protected $curlService;
+    protected $productService;
+
+    public function __construct(CURLService $curlService, ProductService $productService)
+    {
+        $this->curlService = $curlService;
+        $this->productService = $productService;
+    }
+
     public function index()
     {
-        $products = Product::all();
-        $exchangeRate = $this->getExchangeRate();
+        $data = $this->productService->getProductList();
 
-        return view('products.list', compact('products', 'exchangeRate'));
+        return view('products.list', $data);
     }
 
     public function show(Request $request)
     {
-        $id = $request->route('product_id');
-        $product = Product::find($id);
-        $exchangeRate = $this->getExchangeRate();
+        $data = $this->productService->getProductDetail($request);
 
-        return view('products.show', compact('product', 'exchangeRate'));
-    }
-
-    /**
-     * @return float
-     */
-    private function getExchangeRate()
-    {
-        try {
-            $curl = curl_init();
-
-            curl_setopt_array($curl, [
-                CURLOPT_URL => "https://open.er-api.com/v6/latest/USD",
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_TIMEOUT => 5,
-                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                CURLOPT_CUSTOMREQUEST => "GET",
-            ]);
-
-            $response = curl_exec($curl);
-            $err = curl_error($curl);
-
-            curl_close($curl);
-
-            if (!$err) {
-                $data = json_decode($response, true);
-                if (isset($data['rates']['EUR'])) {
-                    return $data['rates']['EUR'];
-                }
-            }
-        } catch (\Exception $e) {
-
-        }
-
-        return env('EXCHANGE_RATE', 0.85);
+        return view('products.show', $data);
     }
 }

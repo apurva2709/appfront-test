@@ -41,12 +41,11 @@ class SendPriceChangeNotification implements ShouldQueue
      */
     public function handle()
     {
-            Mail::to($this->email)
-                ->send(new PriceChangeNotification(
-                    $this->product,
-                    $this->oldPrice,
-                    $this->newPrice
-                ));
-
+        Mail::to($this->email)
+            ->send(new PriceChangeNotification(
+                $this->product,
+                $this->oldPrice,
+                $this->newPrice
+            ));
     }
 }
