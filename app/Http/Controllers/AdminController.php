@@ -80,7 +80,6 @@ class AdminController extends Controller
 
     public function addProduct(ProductRequest $request, CreateProduct $createProduct): RedirectResponse
     {
-        print_r($request); exit();
         $request->validated();
 
         $createProduct->handle($request);
